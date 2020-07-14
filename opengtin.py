@@ -29,11 +29,44 @@ class OpenGTIN:
             match.group('key'): match.group('value')
             for match in regex.finditer(response)
         }
-        if not product_entry['name']:
-            product_entry['name'] = product_entry['detailname']
+        if int(product_entry['error']) != 0:
+            raise OpenGtinException(int(product_entry['error']))
         return product_entry
+
+
+class OpenGtinException(Exception):
+    def __init__(self, code: int):
+        self.error_codes = {
+            0: ["OK", "Operation war erfolgreich"],
+            1: ["not found", "die EAN konnte nicht gefunden werden"],
+            2: ["checksum", "die EAN war fehlerhaft (Checksummenfehler)"],
+            3: ["EAN-format", "die EAN war fehlerhaft (ungültiges Format / fehlerhafte Ziffernanzahl)"],
+            4: ["not a global, unique EAN",
+                "es wurde eine für interne Anwendungen reservierte EAN eingegeben (In-Store, Coupon etc.)"],
+            5: ["access limit exceeded", "Zugriffslimit auf die Datenbank wurde überschritten"],
+            6: ["no product name", "es wurde kein Produktname angegeben"],
+            7: ["product name too long", "der Produktname ist zu lang (max. 20 Zeichen)"],
+            8: ["no or wrong main category id",
+                "die Nummer für die Hauptkategorie fehlt oder liegt außerhalb des erlaubten Bereiches"],
+            9: ["no or wrong sub category id",
+                "die Nummer für die zugehörige Unterkategorie fehlt oder liegt außerhalb des erlaubten Bereiches"],
+            10: ["illegal data in vendor field", "unerlaubte Daten im Herstellerfeld"],
+            11: ["illegal data in description field", "unerlaubte Daten im Beschreibungsfeld"],
+            12: ["data already submitted", "Daten wurden bereits übertragen"],
+            13: ["queryid missing or wrong",
+                 "die UserID/queryid fehlt in der Abfrage oder ist für diese Funktion nicht freigeschaltet"],
+            14: ["unknown command", "es wurde mit dem Parameter 'cmd' ein unbekanntes Kommando übergeben"]
+        }
+        self.code = code
+        self.message = self.error_codes[code]
+
+    def __str__(self):
+        return f"OpenGTIN API returned the error code {self.code}: {self.message[0]}"
 
 
 if __name__ == '__main__':
     o = OpenGTIN()
-    print(o.query(4311501484777))
+    try:
+        print(o.query(3))
+    except OpenGtinException as e:
+        print(e)
