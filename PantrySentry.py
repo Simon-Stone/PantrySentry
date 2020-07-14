@@ -43,11 +43,6 @@ class PantrySentry:
         self.pantry.add(item_name, False)
         self.keep.sync()
 
-    @staticmethod
-    def get_pantry(self, keep_list_name):
-        keep = gkeepapi.Keep()
-        return keep_list_name
-
     def start(self):
         while True:
             print("Waiting for EAN input...")
