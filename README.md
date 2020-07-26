@@ -17,6 +17,7 @@ You can obtain a user ID for the Open GTIN database [here](https://opengtindb.or
 
 
 Start the script ``PantrySentry.py``
+
 Add to pantry:
 - Use the keyboard or a barcode scanner to enter the [EAN](https://en.wikipedia.org/wiki/International_Article_Number) of the item you want to process.
 
