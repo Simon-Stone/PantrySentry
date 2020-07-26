@@ -10,10 +10,10 @@ keyring.set_password("Google Keep", "your-username", "your-google-keep-password"
 ```
 Then create a file ``userdata.py`` and place it in the ``PantrySentry`` root directory. The file needs to define two variables as follows:
 ```python
-openGTIN_user_id = your_openGTIN_user_id (int)
-google_keep_username = your_Google_Keep_user_id (str)
+openGTIN_user_id = your_openGTIN_user_id
+google_keep_username = your_Google_Keep_user_id
 ```
-You can obtain a user ID for the Open GTIN database [here](https://opengtindb.org/).
+You can obtain a user ID for the Open GTIN database [here](https://opengtindb.org/). The openGTIN id variable has to be of type ``int``, the Google Keep username is expected to be of type ``str``.
 
 
 Start the script ``PantrySentry.py``
