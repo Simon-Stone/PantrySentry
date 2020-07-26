@@ -50,20 +50,44 @@ class ListManager:
                 new_count = int(match.group('count')) + 1
                 text[-1] = 'x' + str(new_count)
         else:
-            # Otherwise add a counter of the same format
-            new_count = 2
-            text.append('x' + str(new_count))
+            # Otherwise add a counter of the same format (if it wasn't checked)
+            if not self.list.items[item_idx].checked:
+                new_count = 2
+                text.append('x' + str(new_count))
         new_text = " ".join(text)
         self.list.items[item_idx].text = new_text
         self.list.items[item_idx].checked = False
 
     def remove(self, item: str):
-        # TODO Remove item from list or decrease count if it exists
-        pass
+        if isinstance(self.api, gkeepapi.Keep):
+            item_idx = self.get_index(item)
+            if item_idx is None:
+                raise ValueError(f"Item {item} is not in the pantry!")
+            else:
+                self.decrease_count(item_idx)
+            self.api.sync()
+        else:
+            raise ValueError("No way to remove an item using the currently selected backend.")
 
     def decrease_count(self, item_idx: int):
-        # TODO Decrease count of an existing item
-        pass
+        if self.list.items[item_idx].checked:
+            # If the item was checked, raise an error
+            raise ValueError(f"Item {self.list.items[item_idx].text.rstrip()} was already checked!")
+        regex = re.compile(r'x(?P<count>[0-9]+)')
+        text = self.list.items[item_idx].text.split()
+        if match := regex.match(text[-1]):
+            #  If the last part of the item text is a count of the format 'xNUMBER'
+            new_count = int(match.group('count')) - 1
+            if new_count == 1:
+                text[-1] = ""
+            else:
+                text[-1] = 'x' + str(new_count)
+            new_text = " ".join(text)
+            self.list.items[item_idx].text = new_text
+            self.list.items[item_idx].checked = False
+        else:
+            # Otherwise (only one instance of the item present) check the item
+            self.list.items[item_idx].checked = True
 
 
 if __name__ == '__main__':
