@@ -37,9 +37,16 @@ class PantrySentry:
         if not product.name:
             try:
                 db_entry = self.online_ean_db.query(ean)
-                product = Database.Product(ean=ean, name=db_entry['name'], description=db_entry['descr'])
-                # Update the local database
-                self.local_ean_db[ean] = product
+                if db_entry['name']:
+                    name = db_entry['name']
+                if db_entry['detailname']:
+                    name = db_entry['detailname']
+                if name:
+                    product = Database.Product(ean=ean, name=name, description=db_entry['descr'])
+                    # Update the local database
+                    self.local_ean_db[ean] = product
+                else:
+                    print("No name or detailed name available for this product")
             except OpenGtinException as e:
                 print(e)
         return product.name
@@ -64,7 +71,7 @@ class PantrySentry:
         while True:
             print("Waiting for EAN input...")
             code = input()
-            if code == 'REMOVE?FROM?PANTRZ':
+            if code == 'SWITCHDIRECTION':
                 self.switch_mode()
                 continue
             else:
@@ -84,6 +91,7 @@ class PantrySentry:
                         print(f"Removed {product_name} from the pantry.")
                     except ValueError as e:
                         print(e)
+
                 else:
                     self.remove_item(str(ean))
                     print(f"Could not find product name for {ean}. Removed the EAN from the pantry instead.")
