@@ -19,7 +19,7 @@ You can obtain a user ID for the Open GTIN database [here](https://opengtindb.or
 Start the script ``PantrySentry.py``
 
 Add to pantry:
-- Use the keyboard or a barcode scanner to enter the [EAN](https://en.wikipedia.org/wiki/International_Article_Number) of the item you want to process.
+- Use the keyboard or a barcode scanner to enter the [EAN](https://en.wikipedia.org/wiki/International_Article_Number) of the item you want to process. The EAN is looked up in the Open GTIN database and the retrieved name is added to a Google Keep list. If an item of the same name is already on the list, the item's count is increased by one.
 
 Remove from pantry:
 - Use the barcode in switch_direction.gif to switch to "remove" mode. Everything scanned in the next minute will be removed from the pantry.
